@@ -15,8 +15,9 @@
   <script src="{% static "js/xsrf-token.js" %}"></script>
   <link href="{% static "css/main.css" %}" rel="stylesheet" type="text/css" media="screen">
   <script src="{% static "js/main.js" %}"></script>
+  <link href="{% static "css/admin.css" %}" rel="stylesheet" type="text/css" media="screen">
 </head>
-<body class="is-simple-layout  {% if user.is_staff %}is-admin{% endif %}">
+<body class="is-simple-layout {% if user.is_staff %}is-admin{% endif %}">
     <section class="hero is-fullheight">
     <div class="hero-body">
       {% block content %}{% endblock %}

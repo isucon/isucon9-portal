@@ -22,5 +22,6 @@ urlpatterns = [
     path('', views.index),
     path('auth/', include("isucon.portal.authentication.urls")),
     path('contest/', include("isucon.portal.contest.urls")),
+    path('contest/admin/', include(("isucon.portal.administration.urls", "administration"), namespace="administration")),
     path('admin/', admin.site.urls),
 ]
