@@ -45,7 +45,7 @@ def create_team(request):
     user.email = form.cleaned_data['owner_email']
     user.save()
 
-    return redirect("team_information")
+    return redirect("authentication:team_information")
 
 @check_registration
 @login_required
@@ -80,7 +80,7 @@ def join_team(request):
         user.icon = form.cleaned_data['user_icon']
     user.save()
 
-    return redirect("team_information")
+    return redirect("authentication:team_information")
 
 @team_is_authenticated
 def team_information(request):
