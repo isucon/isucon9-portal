@@ -46,17 +46,25 @@
               </span>
               {% if user and user.is_authenticated and user.team %}
               <span class="navbar-item">
-                <a class="button is-white is-outlined" href="{% url "team_information" %}">
+                <a class="button is-white is-outlined" href="{% url "authentication:team_information" %}">
                   <span class="icon">
                     <i class="fas fa-info-circle"></i>
                   </span>
                   <span>チーム情報</span>
                 </a>
               </span>
+              <span class="navbar-item">
+                <a class="button is-white is-outlined" href="{% url "contest:index" %}">
+                  <span class="icon">
+                    <i class="fa fa-tachometer-alt"></i>
+                  </span>
+                  <span>ダッシュボード</span>
+                </a>
+              </span>
               {% endif %}
               {% if user and user.is_authenticated %}
               <span class="navbar-item">
-                <a class="button is-white is-outlined" href="{% url "logout" %}">
+                <a class="button is-white is-outlined" href="{% url "authentication:logout" %}">
                   <span class="icon">
                     <i class="fas fa-sign-out-alt"></i>
                   </span>
@@ -65,7 +73,7 @@
               </span>
               {% else %}
               <span class="navbar-item">
-                <a class="button is-white is-outlined" href="{% url "login" %}">
+                <a class="button is-white is-outlined" href="{% url "authentication:login" %}">
                   <span class="icon">
                     <i class="fas fa-sign-in-alt"></i>
                   </span>
@@ -90,7 +98,7 @@
                 登録期間: {{ registration_start_at | date:"Y年m月d日 H時i分" }} - {{ registration_end_at | date:"Y年m月d日 H時i分" }}
             </h2>
             <div>
-              <a class="button is-white is-outlined is-large" href="{% url "login" %}">
+              <a class="button is-white is-outlined is-large" href="{% url "authentication:login" %}">
                 参加登録！
               </a>
             </div>

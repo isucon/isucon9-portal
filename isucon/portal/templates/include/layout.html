@@ -22,21 +22,13 @@
     <nav class="navbar is-dark">
         <div class="container">
             <div class="navbar-brand">
-                <a class="navbar-item" href="{% url "dashboard" %}">
+                <a class="navbar-item" href="{% url 'authentication:logout' %}">
                     <img src="{% static "img/isucon9_white.svg" %}" width="112" height="28">
                 </a>
             </div>
             <div id="navMenu" class="navbar-menu">
-                <div class="navbar-start">
-                    <a class="navbar-item" href="{% url "dashboard" %}">
-                        <span class="icon">
-                            <i class="fas fa-chart-line"></i>
-                        </span>
-                        <span>Dashboard</span>
-                    </a>
-                </div>
                 <div class="navbar-end">
-                    <a class="navbar-item" href="{% url 'logout' %}">
+                    <a class="navbar-item" href="{% url 'authentication:logout' %}">
                         <span class="icon">
                             <i class="fas fa-sign-out-alt"></i>
                         </span>
@@ -79,15 +71,26 @@
                     </p>
                     <ul class="menu-list">
                         <li>
-                            <a class="{% if page == "dashboard" %}active{% endif %}" href="{% url "dashboard" %}">
+                            {% url 'contest:dashboard' as dashboard_url %}
+                            <a class="{% if request.path == dashboard_url %}is-active{% endif %}" href="{% url "contest:dashboard" %}">
                                 <span class="icon">
                                     <i class="fas fa-chart-line"></i>
                                 </span>
                                 <span>Dashboard</span>
                             </a>
                         </li>
+                            <li>
+                                {% url 'contest:servers' as servers_url %}
+                                <a class="{% if request.path == servers_url %}is-active{% endif %}" href="{% url "contest:servers" %}">
+                                    <span class="icon">
+                                        <i class="fas fa-server"></i>
+                                    </span>
+                                    <span>Show Servers</span>
+                                </a>
+                            </li>
                         <li>
-                            <a class="{% if page == "jobs" %}active{% endif %}" href="{% url "jobs" %}">
+                            {% url 'contest:jobs' as jobs_url %}
+                            <a class="{% if request.path == jobs_url %}is-active{% endif %}" href="{% url "contest:jobs" %}">
                                 <span class="icon">
                                     <i class="fas fa-list-alt"></i>
                                 </span>
@@ -95,7 +98,8 @@
                             </a>
                         </li>
                         <li>
-                            <a class="{% if page == "scores" %}active{% endif %}" href="{% url "scores" %}">
+                            {% url 'contest:scores' as contest_url %}
+                            <a class="{% if request.path == contest_url %}is-active{% endif %}" href="{% url "contest:scores" %}">
                                 <span class="icon">
                                     <i class="fas fa-chart-area"></i>
                                 </span>
@@ -108,23 +112,32 @@
                     </p>
                     <ul class="menu-list">
                         <li>
-                            <a class="{% if page == "servers" %}active{% endif %}" href="{% url "servers" %}">
+                            {% url 'contest:settings_server' as settings_server_url %}
+                            <a class="{% if request.path == settings_server_url %}is-active{% endif %}" href="{% url "contest:settings_server" %}">
                                 <span class="icon">
                                     <i class="fas fa-server"></i>
                                 </span>
-                                <span>Servers</span>
+                                <span>Server Settings</span>
                             </a>
                         </li>
-                        {% comment %}
-                            <li>
-                                <a class="{% if page == "members" %}active{% endif %}" href="/members">
-                                    <span class="icon">
-                                        <i class="far fa-address-card"></i>
-                                    </span>
-                                    <span>Manage Your Team</span>
-                                </a>
-                            </li>
-                        {% endcomment %}
+                        <li>
+                            {% url 'contest:settings_team' as settings_team_url %}
+                            <a class="{% if request.path == settings_team_url %}is-active{% endif %}" href="{% url "contest:settings_team" %}">
+                                <span class="icon">
+                                    <i class="fas fa-users"></i>
+                                </span>
+                                <span>Team Settings</span>
+                            </a>
+                        </li>
+                        <li>
+                            {% url 'contest:settings_user' as settings_user_url %}
+                            <a class="{% if request.path == settings_user_url %}is-active{% endif %}" href="{% url "contest:settings_user" %}">
+                                <span class="icon">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <span>User Settings</span>
+                            </a>
+                        </li>
                     </ul>
                     <p class="menu-label">
                         Links

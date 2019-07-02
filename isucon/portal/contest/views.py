@@ -24,6 +24,12 @@ def get_base_context(user):
     }
 
 @team_is_authenticated
+def index(request):
+    context = get_base_context(request.user)
+
+    return render(request, "index.html", context)
+
+@team_is_authenticated
 @team_is_now_on_contest
 def dashboard(request):
     context = get_base_context(request.user)
@@ -105,3 +111,18 @@ def teams(request):
     }
 
     return render(request, "teams.html", context)
+
+@team_is_authenticated
+def settings_server(request):
+    context = get_base_context(request.user)
+    return render(request, "settings_server.html", context)
+
+@team_is_authenticated
+def settings_team(request):
+    context = get_base_context(request.user)
+    return render(request, "settings_team.html", context)
+
+@team_is_authenticated
+def settings_user(request):
+    context = get_base_context(request.user)
+    return render(request, "settings_user.html", context)

@@ -33,13 +33,13 @@
 
         <div class="box">
             <span>
-                <a href="{% url 'create_team' %}">
+                <a href="{% url 'authentication:create_team' %}">
                     <button class="button is-block is-info is-large is-fullwidth">新規チームを作成</button>
                 </a>
             </span>
             <br>
             <span>
-                <a href="{% url 'join_team' %}">
+                <a href="{% url 'authentication:join_team' %}">
                     <button class="button is-block is-info is-large is-fullwidth">既存チームに参加</button>
                 </a>
             </span>
@@ -47,10 +47,10 @@
 
         {% else %}
 
-        <a href="{% url 'dashboard' %}">
+        <a href="{% url 'contest:dashboard' %}">
             <button class="button is-block is-info is-large is-fullwidth">Go to Dashboard</button>
         </a>
-        <a href="{% url 'logout' %}">
+        <a href="{% url 'authentication:logout' %}">
             <button class="button is-block is-info is-large is-fullwidth">logout</button>
         </a>
         {% endif %}
