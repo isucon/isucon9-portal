@@ -1,3 +1,4 @@
+import locale
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
@@ -7,18 +8,24 @@ from stdimage.models import StdImageField
 
 from isucon.portal.models import LogicalDeleteMixin
 
+locale.setlocale(locale.LC_TIME, 'ja_JP.UTF-8')
+
 class User(AbstractUser):
     team = models.ForeignKey("Team", blank=True, null=True, on_delete=models.SET_NULL)
-    icon = StdImageField(upload_to=settings.MEDIA_URL + '/icons/', blank=True, null=True, variations={
+    icon = StdImageField(upload_to='icons/', blank=True, null=True, variations={
         'thumbnail': (150, 150, True),
     })
     is_student = models.BooleanField('学生フラグ', default=False, blank=True)
+    display_name = models.CharField('表示名', max_length=100)
+
+    def __str__(self):
+        return self.display_name
 
 class Team(LogicalDeleteMixin, models.Model):
     class Meta:
         verbose_name = verbose_name_plural = "チーム"
 
-    PARTICIPATE_AT_CHOICES = [(d, "{}日目 ({})".format(idx+1, d.strftime("%Y-%m-%d"))) for idx, d in enumerate(settings.CONTEST_DATES)]
+    PARTICIPATE_AT_CHOICES = [(d, "{}日目 ({})".format(idx+1, d.strftime("%Y-%m-%d %a"))) for idx, d in enumerate(settings.CONTEST_DATES)]
 
     owner = models.OneToOneField(User, verbose_name="オーナー", on_delete=models.PROTECT, related_name="+")
     is_active = models.BooleanField("有効", default=True, blank=True)
@@ -39,7 +46,7 @@ class Team(LogicalDeleteMixin, models.Model):
         in_time = settings.CONTEST_START_TIME <= now.time() <= settings.CONTEST_END_TIME
         return in_date and in_time
 
-    def __name__(self):
+    def __str__(self):
         return self.name
 
     @property

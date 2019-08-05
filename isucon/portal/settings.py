@@ -76,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'isucon.portal.contest.context_processors.settings_url',
             ],
         },
     },
@@ -91,6 +92,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ATOMIC_REQUESTS': True,
     }
 }
 
@@ -141,7 +143,43 @@ LOGIN_URL = "authentication:login"
 MAX_UPLOAD_SIZE = 5242880
 
 # アプリケーション固有設定
-MEDIA_URL = 'media/'
+MEDIA_ROOT = 'media/'
+MEDIA_URL = '/media/'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {},
+    'handlers': {
+        'slack_admins': {
+            'level': 'ERROR',
+            'filters': [],
+            'class': 'isucon.portal.logging.SlackExceptionHandler',
+        },
+        'console': {
+            'level': 'INFO',
+            'filters': [],
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'formatters': {
+        'simple': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[%(server_time)s] %(message)s a',
+        }
+    },
+    'loggers': {
+        'django': {
+            'level': 'INFO',
+            'handlers': ['slack_admins', 'console'],
+        },
+        'isucon': {
+            'level': 'INFO',
+            'handlers': ['slack_admins', 'console'],
+        },
+    },
+}
+
 
 # 登録期間
 REGISTRATION_START_AT = portal_utils.get_utc_datetime(2019, 6, 1, 9, 0, 0)
@@ -150,8 +188,8 @@ REGISTRATION_END_AT = portal_utils.get_utc_datetime(2019, 8, 25, 9, 0, 0)
 # コンテスト開催期間
 # 日付
 CONTEST_DATES = [
-    datetime.date(2019, 7, 2),
-    datetime.date(2019, 9, 2)
+    datetime.date(2019, 9, 7),
+    datetime.date(2019, 9, 8)
 ]
 
 # 時刻
@@ -172,3 +210,15 @@ MAX_TEAM_MEMBER_NUM = 3
 PASSWORD_LETTERS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
 # チームパスワードの文字数
 PASSWORD_LENGTH = 20
+
+# Slack
+SLACK_ENDPOINT_URL = "https://hooks.slack.com/services/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"
+
+
+# 外部リンク
+MANUAL_URL = 'https://gist.github.com/misodengaku/a7fcb08f74c42a3a65b271704aa02ed6' # リンク先例
+REGULATION_URL = 'http://oomurosakura.co/' # リンク先例
+DISCORD_URL = 'https://discordapp.com/'
+ISUCON_OFFICIAL_URL = 'http://isucon.net/'
+TWITTER_URL = 'https://twitter.com/isucon_official'
+TERM_URL = 'http://isucon.net/archives/53567239.html'

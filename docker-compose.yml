@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3'
 
 services:
   django:
@@ -10,8 +10,12 @@ services:
       - DJANGO_DATABASE_TYPE=postgres
       - GITHUB_KEY
       - GITHUB_SECRET
+      - DJANGO_ALLOWED_HOST
+      - DJANGO_DEBUG
+      - SLACK_ENDPOINT_URL
     volumes:
       - "staticdata:/opt/app/static/"
+      - "mediadata:/opt/app/media/"
   discard_forever:
     restart: always
     build: ./
@@ -40,6 +44,8 @@ services:
       - "./nginx/nginx.conf:/etc/nginx/nginx.conf"
       - "./nginx/conf.d/:/etc/nginx/conf.d"
       - "staticdata:/opt/app/static/"
+      - "mediadata:/opt/app/media/"
 volumes:
   dbdata:
   staticdata:
+  mediadata:

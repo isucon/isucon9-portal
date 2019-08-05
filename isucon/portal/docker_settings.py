@@ -15,6 +15,12 @@ DEBUG = True if os.environ.get('DJANGO_DEBUG', "true").lower() == "true" else Fa
 
 ALLOWED_HOSTS = [os.environ.get('DJANGO_ALLOWED_HOST', "*")]
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
+MEDIA_ROOT = 'media/'
+MEDIA_URL = '/media/'
+
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
@@ -22,6 +28,7 @@ DATABASES_SQLITE3 = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ATOMIC_REQUESTS': True,
     }
 }
 
@@ -33,6 +40,7 @@ DATABASES_POSTGRES = {
         'PASSWORD': 'password',
         'HOST': 'postgres',
         'PORT': '5432',
+        'ATOMIC_REQUESTS': True,
     }
 }
 
@@ -59,3 +67,39 @@ STATIC_ROOT = "/opt/app/static/"
 
 BENCHMARK_MAX_CONCURRENCY = 3
 BENCHMARK_ABORT_TIMEOUT_SEC = 300
+
+SLACK_ENDPOINT_URL = os.environ.get('SLACK_ENDPOINT_URL', "https://slack.com/api/chat.postMessage")
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {},
+    'handlers': {
+        'slack_admins': {
+            'level': 'ERROR',
+            'filters': [],
+            'class': 'isucon.portal.logging.SlackExceptionHandler',
+        },
+        'console': {
+            'level': 'INFO',
+            'filters': [],
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'formatters': {
+        'simple': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[%(server_time)s] %(message)s a',
+        }
+    },
+    'loggers': {
+        'django': {
+            'level': 'INFO',
+            'handlers': ['slack_admins', 'console'],
+        },
+        'isucon': {
+            'level': 'INFO',
+            'handlers': ['slack_admins', 'console'],
+        },
+    },
+}

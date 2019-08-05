@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=600px">
   <title>{{ title|default:"ISUCON9 Portal" }}</title>
   <meta http-equiv="Content-Style-Type" content="text/css">
   <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -29,7 +29,7 @@
           <div id="navbarMenu" class="navbar-menu">
             <div class="navbar-end">
               <span class="navbar-item">
-                <a class="button is-white is-outlined" target="_blank" href="<: $config.url.isucon_site :>">
+                <a class="button is-white is-outlined" target="_blank" href="{{ isucon_official_url }}">
                   <span class="icon">
                     <i class="fa fa-home"></i>
                   </span>
@@ -37,7 +37,7 @@
                 </a>
               </span>
               <span class="navbar-item">
-                <a class="button is-white is-outlined" target="_blank" href="<: $config.url.twitter :>">
+                <a class="button is-white is-outlined" target="_blank" href="{{ twitter_url }}">
                   <span class="icon">
                     <i class="fab fa-twitter"></i>
                   </span>
@@ -90,24 +90,32 @@
       <div class="hero-body">
         <div class="container has-text-centered">
           <div class="column is-6 is-offset-3">
-            {% if is_registration_available and user and user.is_authenticated and not user.team %}
+            {% if is_registration_available %}
             <h1 class="title">
               大好評参加登録受付中！
             </h1>
             <h2 class="subtitle">
-                登録期間: {{ registration_start_at | date:"Y年m月d日 H時i分" }} - {{ registration_end_at | date:"Y年m月d日 H時i分" }}
+                登録期間: {{ registration_end_at | date:"Y年m月d日 H時i分" }} まで
             </h2>
             <div>
-              <a class="button is-white is-outlined is-large" href="{% url "authentication:login" %}">
+              {% if user.team %}
+              <a class="button is-white is-outlined is-large" href="{% url "team_information" %}">
+                チーム登録情報はこちら
+              </a>
+              {% else %}
+              <a class="button is-white is-outlined is-large" href="{% url "login" %}">
                 参加登録！
               </a>
+              <p>参加登録にはGitHubのアカウントを利用します</p>
+              {% endif %}
+
             </div>
             {% else %}
             <h1 class="title">
               Comming soon!
             </h1>
             <h2 class="subtitle">
-                登録期間: {{ registration_start_at | date:"Y年m月d日 H時i分" }} - {{ registration_end_at | date:"Y年m月d日 H時i分" }}
+                登録期間: {{ registration_end_at | date:"Y年m月d日 H時i分" }} まで
             </h2>
             {% endif %}
           </div>
