@@ -178,11 +178,7 @@ var timeFormat = "YYYY-MM-DD HH:mm:ss";
 var config = {
     type: 'line',
     data: {
-        labels: [
-            {% for graph_label in graph_labels %}
-                new Date("{{ graph_label | safe }}"),
-            {% endfor %}
-        ],
+        labels: [],
         datasets: [
             {% for dataset in graph_datasets %}
             {
