@@ -46,7 +46,7 @@ def dashboard(request):
 
     # キャッシュ済みグラフデータの取得 (topNのみ表示するデータ)
     client = RedisClient()
-    graph_labels, graph_datasets = client.get_graph_data(request.user.team, ranking, is_last_spurt=context['is_last_spurt'])
+    graph_labels, graph_datasets, graph_min_label, graph_max_label = client.get_graph_data(request.user.team, ranking, is_last_spurt=context['is_last_spurt'])
 
     # チームのスコアを取得
     try:
@@ -61,6 +61,8 @@ def dashboard(request):
         "recent_jobs": recent_jobs,
         "top_teams": top_teams,
         "team_score": team_score,
+        "graph_min_label": graph_min_label,
+        "graph_max_label": graph_max_label,
         "graph_labels": graph_labels,
         "graph_datasets": graph_datasets,
     })

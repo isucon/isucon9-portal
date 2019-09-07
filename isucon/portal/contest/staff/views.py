@@ -52,11 +52,13 @@ def dashboard(request):
 
     # キャッシュ済みグラフデータの取得 (topNのみ表示するデータ)
     client = RedisClient()
-    graph_labels, graph_datasets = client.get_graph_data_for_staff(participate_at, ranking)
+    graph_labels, graph_datasets, graph_min_label, graph_max_label = client.get_graph_data_for_staff(participate_at, ranking)
 
     context.update({
         "top_teams": top_teams,
         "graph_labels": graph_labels,
+        "graph_min_label": graph_min_label,
+        "graph_max_label": graph_max_label,
         "graph_datasets": graph_datasets,
     })
 

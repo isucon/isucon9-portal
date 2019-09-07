@@ -16,6 +16,21 @@ jst = timezone('Asia/Tokyo')
 TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
+def normalize_finished_at(finished_at):
+    return finished_at.strftime(TIME_FORMAT)
+
+
+def minmax_label(labels):
+    min_label , max_label = None, None
+    for finished_at in [datetime.datetime.strptime(label, TIME_FORMAT) for label in labels]:
+        if min_label is None or finished_at < min_label:
+            min_label = finished_at
+        elif max_label is None or finished_at > max_label:
+            max_label = finished_at
+
+    return normalize_finished_at(min_label), normalize_finished_at(max_label)
+
+
 class TeamDict:
     """チーム情報を格納するデータ構造"""
 
@@ -46,12 +61,8 @@ class TeamDict:
             return None
         return self.labels[-1]
 
-    @staticmethod
-    def _normalize_finished_at(finished_at):
-        return finished_at.strftime(TIME_FORMAT)
-
     def append_job(self, job):
-        finished_at = self._normalize_finished_at(job.finished_at.astimezone(jst))
+        finished_at = normalize_finished_at(job.finished_at.astimezone(jst))
 
         self.labels.append(finished_at)
         self.scores.append(job.score)
@@ -259,8 +270,9 @@ class RedisClient:
         if labels is None:
             labels = []
         labels = list(sorted(labels, key=lambda d_str: datetime.datetime.strptime(d_str, TIME_FORMAT)))
+        min_label, max_label = minmax_label(labels)
 
-        return teams_dict, team_dict, labels
+        return teams_dict, team_dict, labels, min_label, max_label
 
     def _prepare_for_not_lastspurt(self, target_team):
         """lastspurtでない場合向けの teams_dict, team_dict, labels を用意します"""
@@ -281,8 +293,9 @@ class RedisClient:
         if labels is None:
             labels = []
         labels = list(sorted(labels, key=lambda d_str: datetime.datetime.strptime(d_str, TIME_FORMAT)))
+        min_label, max_label = minmax_label(labels)
 
-        return teams_dict, team_dict, labels
+        return teams_dict, team_dict, labels, min_label, max_label
 
     def _prepare_for_staff(self):
         """staff向けの teams_dict, team_dict, labels を用意します"""
@@ -310,18 +323,19 @@ class RedisClient:
         if labels is None:
             labels = []
         labels = list(sorted(labels, key=lambda d_str: datetime.datetime.strptime(d_str, TIME_FORMAT)))
+        min_label, max_label = minmax_label(labels)
 
-        return new_teams_dict, None, labels
+        return new_teams_dict, None, labels, min_label, max_label
 
     def get_graph_data(self, target_team, ranking, is_last_spurt=False):
         """Chart.js によるグラフデータをキャッシュから取得します"""
         # teams_dictとteam_dict、labelsを用意
         if is_last_spurt:
             # ラストスパートでは、自分以外のチームのグラフ更新が止まったように見える
-            teams_dict, target_team_dict, labels = self._prepare_for_lastspurt(target_team)
+            teams_dict, target_team_dict, labels, min_label, max_label = self._prepare_for_lastspurt(target_team)
         else:
             # どのユーザにおいても、topn rankingに含まれるチームのみグラフで見れる
-            teams_dict, target_team_dict, labels = self._prepare_for_not_lastspurt(target_team)
+            teams_dict, target_team_dict, labels, min_label, max_label = self._prepare_for_not_lastspurt(target_team)
 
         # teams_dict, team_dict, labels に基づき、ラベルとデータセットを作成して返す
         datasets = []
@@ -339,13 +353,13 @@ class RedisClient:
         if target_team.id not in ranking and target_team_dict is not None:
             datasets.append(dict(label=target_team_dict.label, data=target_team_dict.data))
 
-        return labels, datasets
+        return labels, datasets, min_label, max_label
 
     def get_graph_data_for_staff(self, participate_at, ranking):
         """Chart.js によるグラフデータをキャッシュから取得します"""
         # NOTE: prepare_for_staff の返値の２つ目(team_dict)はNoneが返ってくる
         #       (=スタッフについて、チームを考慮したグラフデータの特別な加工が必要ないので)
-        teams_dict, _, labels = self._prepare_for_staff()
+        teams_dict, _, labels, min_label, max_label = self._prepare_for_staff()
 
         # teams_dict, labels に基づき、ラベルとデータセットを作成して返す
         datasets = []
@@ -359,5 +373,5 @@ class RedisClient:
 
             datasets.append(dict(label=team_dict.label, data=team_dict.data))
 
-        return labels, datasets
+        return labels, datasets, min_label, max_label
 
